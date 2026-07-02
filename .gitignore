@@ -25,3 +25,4 @@ private/**
 .DS_Store
 
 site/
+.vercel/

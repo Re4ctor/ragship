@@ -1,4 +1,3 @@
 {
-  "buildCommand": "npm run build:landing",
-  "outputDirectory": "site"
+  "buildCommand": "npm run build:landing"
 }
