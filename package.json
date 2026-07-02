@@ -17,7 +17,7 @@
   "scripts": {
     "build": "npm run build:app && npm run build:landing",
     "build:app": "tsc && cp src/ui.html src/landing.html dist/",
-    "build:landing": "rm -rf .vercel/output && mkdir -p .vercel/output/static/assets && cp src/landing.html .vercel/output/static/index.html && cp assets/ragship-mascot.svg .vercel/output/static/assets/ && printf '{\"version\":3}' > .vercel/output/config.json",
+    "build:landing": "node scripts/build-landing.mjs",
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",
     "ingest": "tsx src/ingest.ts",
