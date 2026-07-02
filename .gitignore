@@ -1,0 +1,27 @@
+node_modules/
+dist/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+
+# local private data
+data/**
+!data/.gitkeep
+docs/markdown/**
+!docs/markdown/.gitkeep
+private/**
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+
+*.log
+.DS_Store
+
+site/

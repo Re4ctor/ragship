@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ragship App</title>
+  <style>
+    :root {
+      --bg: #f7f6f3;
+      --surface: #ffffff;
+      --surface-2: #f9f9f8;
+      --border: #eaeaea;
+      --text: #111111;
+      --text-secondary: #787774;
+      --accent-bg: #edf3ec;
+      --accent-text: #346538;
+      --danger-bg: #fdebec;
+      --danger-text: #9f2f2d;
+      --code-bg: #f7f6f3;
+      --radius: 10px;
+      --radius-sm: 6px;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Geist Sans", "Helvetica Neue", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+    }
+
+    .brand {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--accent-bg);
+      color: var(--accent-text);
+    }
+
+    .status.pending { background: #fbf3db; color: #956400; }
+    .status.fail { background: var(--danger-bg); color: var(--danger-text); }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 24px 24px;
+    }
+
+    .messages {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .message {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      animation: enter 350ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user { align-items: flex-end; }
+    .message.assistant { align-items: flex-start; }
+
+    .bubble {
+      max-width: 92%;
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      line-height: 1.55;
+      font-size: 15px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .message.user .bubble {
+      background: var(--surface-2);
+    }
+
+    .message.assistant .bubble {
+      background: var(--surface);
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 15px;
+      margin-top: 80px;
+    }
+
+    .sources {
+      max-width: 92%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      font-size: 12px;
+      color: var(--text-secondary);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .sources summary {
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .sources ul {
+      margin: 0;
+      padding: 0 14px 12px 30px;
+    }
+
+    .sources li {
+      margin-bottom: 4px;
+    }
+
+    .composer {
+      padding: 16px 24px 24px;
+    }
+
+    .composer-inner {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      padding: 10px 10px 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .composer-inner:focus-within {
+      border-color: #d1d1d1;
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 15px;
+      line-height: 1.45;
+      max-height: 160px;
+      padding: 6px 0;
+    }
+
+    textarea::placeholder { color: #a5a5a5; }
+
+    button.send {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--text);
+      color: var(--surface);
+      cursor: pointer;
+      transition: transform 100ms ease, background 150ms ease;
+    }
+
+    button.send:hover { background: #333333; }
+    button.send:active { transform: scale(0.96); }
+    button.send:disabled { background: #b9b9b9; cursor: not-allowed; }
+
+    .bubble p { margin: 0 0 10px 0; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble ul { margin: 0 0 10px 0; padding-left: 20px; }
+    .bubble li { margin-bottom: 4px; }
+    .bubble code {
+      background: var(--code-bg);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: "SF Mono", "Geist Mono", Menlo, monospace;
+      font-size: 13px;
+      border: 1px solid var(--border);
+    }
+    .bubble pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      margin: 0 0 10px 0;
+    }
+    .bubble pre code { padding: 0; border: none; background: transparent; }
+    .bubble strong { font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">Ragship</div>
+      <div class="status pending" id="status">
+        <span class="status-dot"></span>
+        <span id="status-text">Checking</span>
+      </div>
+    </header>
+
+    <main id="main">
+      <div class="messages" id="messages">
+        <div class="empty">Ask a question about the wiki.</div>
+      </div>
+    </main>
+
+    <div class="composer">
+      <form class="composer-inner" id="form">
+        <textarea id="question" rows="1" placeholder="Ask something…"></textarea>
+        <button type="submit" class="send" id="send" aria-label="Send">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const messagesEl = document.getElementById('messages');
+    const form = document.getElementById('form');
+    const textarea = document.getElementById('question');
+    const sendBtn = document.getElementById('send');
+    const statusEl = document.getElementById('status');
+    const statusText = document.getElementById('status-text');
+
+    async function checkHealth() {
+      try {
+        const res = await fetch('/health');
+        const data = await res.json();
+        const ok = res.ok && data.ok;
+        statusEl.className = 'status ' + (ok ? '' : 'fail');
+        statusText.textContent = ok ? 'Ready' : 'Unhealthy';
+      } catch {
+        statusEl.className = 'status fail';
+        statusText.textContent = 'Offline';
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function renderMarkdown(text) {
+      let html = escapeHtml(text);
+      html = html.replace(/```([\s\S]*?)```/g, (_, code) => '<pre><code>' + code.replace(/^\n|\n$/g, '') + '</code></pre>');
+      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+      html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+      html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+
+      const blocks = html.split(/\n\n+/);
+      return blocks.map(block => {
+        const lines = block.trim().split('\n');
+        if (lines.length && lines.every(l => /^[-*]\s/.test(l))) {
+          return '<ul>' + lines.map(l => '<li>' + l.replace(/^[-*]\s+/, '') + '</li>').join('') + '</ul>';
+        }
+        if (block.startsWith('<pre>')) return block;
+        return '<p>' + block.replace(/\n/g, '<br>') + '</p>';
+      }).join('');
+    }
+
+    function appendMessage(role, text) {
+      if (messagesEl.querySelector('.empty')) messagesEl.innerHTML = '';
+      const row = document.createElement('div');
+      row.className = 'message ' + role;
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.innerHTML = role === 'assistant' ? renderMarkdown(text) : escapeHtml(text);
+      row.appendChild(bubble);
+      messagesEl.appendChild(row);
+      row.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      return row;
+    }
+
+    function appendSources(row, sources) {
+      if (!sources || sources.length === 0) return;
+      const details = document.createElement('details');
+      details.className = 'sources';
+      details.innerHTML = '<summary>Sources (' + sources.length + ')</summary><ul>' +
+        sources.map(s => '<li>' + escapeHtml(s.title) + (s.section ? ' / ' + escapeHtml(s.section) : '') + '<br>' + escapeHtml(s.relativePath) + '</li>').join('') +
+        '</ul>';
+      row.appendChild(details);
+    }
+
+    function setLoading(loading) {
+      sendBtn.disabled = loading;
+      sendBtn.style.opacity = loading ? '0.6' : '1';
+    }
+
+    function autoResize() {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 160) + 'px';
+    }
+
+    textarea.addEventListener('input', autoResize);
+
+    textarea.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const question = textarea.value.trim();
+      if (!question) return;
+
+      appendMessage('user', question);
+      textarea.value = '';
+      textarea.style.height = 'auto';
+      setLoading(true);
+
+      try {
+        const res = await fetch('/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question })
+        });
+        const data = await res.json();
+        const row = appendMessage('assistant', data.error ? 'Error: ' + data.error : data.answer);
+        if (!data.error) appendSources(row, data.sources);
+      } catch (err) {
+        appendMessage('assistant', 'Failed to reach server.');
+      } finally {
+        setLoading(false);
+        textarea.focus();
+      }
+    });
+
+    checkHealth();
+    setInterval(checkHealth, 10000);
+  </script>
+</body>
+</html>
