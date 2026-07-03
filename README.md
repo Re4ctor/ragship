@@ -38,14 +38,16 @@ On macOS, native Ollama is recommended because Docker does not expose the Apple 
 ## Install
 
 ```bash
-npm install -g ragship
+npm install -g @stackctl/ragship
 ```
 
 Or run without installing:
 
 ```bash
-npx ragship ./docs
+npx @stackctl/ragship ./docs
 ```
+
+npm package: https://www.npmjs.com/package/@stackctl/ragship
 
 ## Usage
 

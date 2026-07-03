@@ -1,5 +1,5 @@
 {
-  "name": "ragship",
+  "name": "@stackctl/ragship",
   "version": "0.1.0",
   "description": "Ship a folder of Markdown into a local RAG app using Ollama.",
   "type": "module",
