@@ -16,13 +16,14 @@
   ],
   "scripts": {
     "build": "npm run build:app && npm run build:landing",
-    "build:app": "tsc && cp src/ui.html src/landing.html dist/",
+    "build:app": "tsc && cp src/ui.html src/landing.html dist/ && chmod +x dist/cli.js",
     "build:landing": "node scripts/build-landing.mjs",
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",
     "ingest": "tsx src/ingest.ts",
     "ask": "tsx src/ask.ts",
     "typecheck": "tsc --noEmit",
+    "prepack": "npm run build:app",
     "prepublishOnly": "npm run build:app"
   },
   "keywords": [
@@ -35,7 +36,7 @@
   "author": "",
   "license": "MIT",
   "engines": {
-    "node": "22.x"
+    "node": ">=20"
   },
   "dependencies": {
     "@libsql/client": "^0.15.12",

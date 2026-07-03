@@ -1,4 +1,7 @@
+#!/usr/bin/env node
+
 import fs from "node:fs/promises";
+import path from "node:path";
 import { spawn } from "node:child_process";
 import { config } from "./config.js";
 import { initializeSchema } from "./schema.js";
@@ -16,6 +19,22 @@ function runCommand(cmd: string, args: string[] = []): Promise<void> {
       else reject(new Error(`${cmd} ${args.join(" ")} exited with ${code}`));
     });
   });
+}
+
+function localDatabasePath(databaseUrl: string): string | undefined {
+  if (!databaseUrl.startsWith("file:")) return undefined;
+  return databaseUrl.slice("file:".length).split("?")[0];
+}
+
+async function ensureRuntimeFolders(): Promise<void> {
+  const databasePath = localDatabasePath(config.databaseUrl);
+  const folders = new Set([
+    config.docsDir,
+    config.dataDir,
+    ...(databasePath ? [path.dirname(path.resolve(databasePath))] : [])
+  ]);
+
+  await Promise.all([...folders].map((folder) => fs.mkdir(folder, { recursive: true })));
 }
 
 async function ensureOllama(): Promise<void> {
@@ -50,7 +69,7 @@ async function main() {
   logger.info(`Database:    ${config.databaseUrl}`);
   logger.info(`Ollama:      ${config.ollamaBaseUrl}`);
 
-  await fs.mkdir(config.dataDir, { recursive: true });
+  await ensureRuntimeFolders();
   await ensureOllama();
   await ensureModel(config.embeddingModel);
   await ensureModel(config.llmModel);

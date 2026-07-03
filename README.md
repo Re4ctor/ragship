@@ -219,6 +219,8 @@ Build the CLI/server app that exposes the chat UI:
 npm run build:app
 ```
 
+This creates an executable CLI at `dist/cli.js`. When run from any folder, Ragship creates the needed local runtime folders there, including `docs/` and `data/` by default.
+
 Build the Vercel landing page only:
 
 ```bash
